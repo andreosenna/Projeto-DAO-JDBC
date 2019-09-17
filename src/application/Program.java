@@ -15,12 +15,19 @@ public class Program {
 		Seller seller = sellerDao.findById(2);
 		System.out.println(seller);
 		
-		System.out.println("+========++=======++=====++=====+++=========");
+		System.out.println("+========++=======   2     ++=====++=====+++=========");
 		Department dep = new Department(4,null);
 		List<Seller> sel = sellerDao.findByDepartment(dep);
 		for(Seller obj : sel) {
 			System.out.println(obj);
 		}
+		System.out.println("+========++====    3 ===++=====++=====+++=========");
+		sel = sellerDao.findAll();
+		for(Seller obj : sel) {
+			System.out.println(obj);
+		}
+		
+		
 	}
 
 }
