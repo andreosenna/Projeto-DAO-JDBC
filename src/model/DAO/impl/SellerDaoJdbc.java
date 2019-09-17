@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +27,35 @@ public SellerDaoJdbc(Connection conn) {
 
 	@Override
 	public void insert(Seller obj) {
-		// TODO Auto-generated method stub
+	PreparedStatement st = null;
+	try {
+		st = conn.prepareStatement(
+				"Insert into seller "
+				+"(Name,Email,Birthdate, BaseSalary, DepartmentId)"
+				+"Values (?,?,?,?,?)",Statement.RETURN_GENERATED_KEYS);
+		st.setString(1,obj.getName());
+		st.setString(2,obj.getEmail());
+		st.setDate(3, new java.sql.Date(obj.getBirthDate().getTime()));
+		st.setDouble(4,obj.getSalary());
+		st.setInt(5,obj.getDepartment().getId());
+		int rowsAffected = st.executeUpdate();
+		if(rowsAffected >0) {
+			ResultSet rs = st.getGeneratedKeys();
+			if(rs.next()) {// já que não tem id esse método irá recuperar o id do banco de dados e setar no objeto obj
+				int id = rs.getInt(1);
+				obj.setId(id);
+		}
+			
+		}else {
+		throw new DbException("Erro! nenhum valor afetado");	
+		}
+		
+	}catch(SQLException e) {
+		throw new DbException("erro ");
+	}finally {
+		DB.closeStatement(st);
+		//DB.closeResultSet(rs);
+	}
 		
 	}
 
