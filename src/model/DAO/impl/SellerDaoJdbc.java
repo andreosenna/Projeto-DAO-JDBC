@@ -61,9 +61,32 @@ public SellerDaoJdbc(Connection conn) {
 
 	@Override
 	public void update(Seller obj) {
-		// TODO Auto-generated method stub
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement(
+					"Update seller "
+					+"Set Name = ?, Email = ?, BirthDate = ? , BaseSalary = ?, DepartmentId = ? "
+					+"Where Id = ?"
+			);
+			st.setString(1,obj.getName());
+			st.setString(2,obj.getEmail());
+			st.setDate(3, new java.sql.Date(obj.getBirthDate().getTime()));
+			st.setDouble(4,obj.getSalary());
+			st.setInt(5,obj.getDepartment().getId());
+			st.setInt(6, obj.getId());
+			st.executeUpdate();
 		
-	}
+					
+		}catch(SQLException e) {
+			throw new DbException("erro ");
+		}finally {
+			DB.closeStatement(st);
+			//DB.closeResultSet(rs);
+		}
+			
+		}
+		
+	
 
 	@Override
 	public void deleteById(Integer id) {
@@ -77,14 +100,11 @@ public SellerDaoJdbc(Connection conn) {
 		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement(
-		"Select Seller.*, Department.name as DepName from Seller "
+		"Select Seller.*, Department.Name as DepName from Seller "
 		+"Inner join department on seller.DepartmentId = Department.id "
 		+"Where seller.id = ?");
 			st.setInt(1,id);
-			System.out.println(st);
-			System.out.println("***************");
 			rs = st.executeQuery();
-			System.out.println(rs);
 			if(rs.next()) {
 				
 				Department dep = instantiateDepartment(rs); // metodo de simplificação e reuso
