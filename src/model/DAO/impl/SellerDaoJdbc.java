@@ -90,7 +90,22 @@ public SellerDaoJdbc(Connection conn) {
 
 	@Override
 	public void deleteById(Integer id) {
-		// TODO Auto-generated method stub
+		PreparedStatement st = null;
+		try {
+		st = conn.prepareStatement(
+				"Delete from Seller "
+				+"Where Id =  ?");
+				st.setInt(1, id);
+				int row = st.executeUpdate();
+			if (row == 0) {
+				System.out.println("valor não encontrado");
+			}
+		}catch(SQLException e){
+			throw new DbException("deleçao não realizada id não encotrada ");
+		}finally {
+			DB.closeStatement(st);
+		}
+		
 		
 	}
 
